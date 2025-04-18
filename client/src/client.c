@@ -46,6 +46,7 @@ int main(void)
 	conexion = crear_conexion(ip, puerto);
 
 	// Enviamos al servidor el valor de CLAVE como mensaje
+	enviar_mensaje(valor,conexion);
 
 	// Armamos y enviamos el paquete
 	paquete(conexion);
@@ -69,7 +70,7 @@ t_log* iniciar_logger(void)
 
 t_config* iniciar_config(void)
 {
-	t_config* nuevo_config = config_create("cliente.config");
+	t_config* nuevo_config = config_create("/home/utnso/tp0/tp0/client/cliente.config");
 	if( nuevo_config == NULL){
 		perror("Error al crear el .config");
 		exit(EXIT_FAILURE);
@@ -104,13 +105,19 @@ void paquete(int conexion)
 {
 	// Ahora toca lo divertido!
 	char* leido;
-	t_paquete* paquete;
+	t_paquete* paquete = crear_paquete();
 
 	// Leemos y esta vez agregamos las lineas al paquete
-
+	leido = readline("> ");
+	while(strcmp(leido,"") != 0){
+		agregar_a_paquete(paquete,leido,strlen(leido)+1);
+		free(leido);
+		leido = readline("> ");
+		log_info(logger,"%s",leido);
+	}
 
 	// ¡No te olvides de liberar las líneas y el paquete antes de regresar!
-	
+	free(leido);
 }
 
 void terminar_programa(int conexion, t_log* logger, t_config* config)
